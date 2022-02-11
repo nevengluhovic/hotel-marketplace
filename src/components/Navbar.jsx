@@ -50,13 +50,21 @@ const Navbar = () => {
           </li>
           <li className="navbarListItem" onClick={() => navigate("/sign-in")}>
             <PersonOutlineIcon
-              fill={matchRoute("/sign-up") ? "#2c2c2c" : "#8f8f8f"}
+              fill={
+                matchRoute("/sign-up") ||
+                matchRoute("/sign-in") ||
+                matchRoute("/profile")
+                  ? "#2c2c2c"
+                  : "#8f8f8f"
+              }
               width="36px"
               height="36px"
             />
             <p
               className={
-                matchRoute("/sign-up")
+                matchRoute("/sign-up") ||
+                matchRoute("/sign-in") ||
+                matchRoute("/profile")
                   ? "navbarListItemNameActive"
                   : "navbarListItemName"
               }

@@ -45,7 +45,7 @@ function SignUp() {
       const user = userCredentials.user;
 
       updateProfile(auth.currentUser, { displayName: name });
-      navigate("/explore");
+      navigate("/");
     } catch (error) {
       console.log(error);
     }
