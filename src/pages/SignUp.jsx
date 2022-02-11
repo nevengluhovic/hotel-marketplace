@@ -8,6 +8,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { db } from "../firebase.config";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 
 // ICONS
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
@@ -46,6 +47,12 @@ function SignUp() {
 
       updateProfile(auth.currentUser, { displayName: name });
       navigate("/");
+
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
     } catch (error) {
       console.log(error);
     }
