@@ -48,7 +48,7 @@ const Navbar = () => {
               Offers
             </p>
           </li>
-          <li className="navbarListItem" onClick={() => navigate("/sign-in")}>
+          <li className="navbarListItem" onClick={() => navigate("/profile")}>
             <PersonOutlineIcon
               fill={
                 matchRoute("/sign-up") ||
