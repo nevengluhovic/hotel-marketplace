@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  updateProfile,
+  updateEmail,
+} from "firebase/auth";
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { useNavigate, Link } from "react-router-dom";
@@ -24,16 +29,22 @@ const Profile = () => {
 
   const onSubmit = async () => {
     try {
-      if (auth.currentUser.displayName !== name) {
-        // Update display name in fb
+      if (
+        auth.currentUser.displayName !== name ||
+        auth.currentUser.email !== email
+      ) {
+        // Update display name in Firebase
+        await updateEmail(auth.currentUser, email);
+        // Update email in Firebase
         await updateProfile(auth.currentUser, {
           displayName: name,
         });
 
-        // Update in firestore
+        // Update name and email in firestore database
         const userRef = doc(db, "users", auth.currentUser.uid);
         await updateDoc(userRef, {
           name,
+          email,
         });
       }
     } catch (error) {
