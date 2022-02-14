@@ -14,6 +14,7 @@ import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 // ICONS
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
 import visibilityIcon from "../assets/svg/visibilityIcon.svg";
+import OAuth from "../components/OAuth";
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,6 +39,7 @@ function SignUp() {
     try {
       const auth = getAuth();
 
+      // Creating New User
       const userCredentials = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -53,6 +55,7 @@ function SignUp() {
       delete formDataCopy.password;
       formDataCopy.timestamp = serverTimestamp();
 
+      // Saving User to Firestore DB
       await setDoc(doc(db, "users", user.uid), formDataCopy);
     } catch (error) {
       toast.error("Something went wrong!");
@@ -114,7 +117,7 @@ function SignUp() {
           </div>
         </form>
 
-        {/* Google OAuth */}
+        <OAuth />
 
         <Link to="/sign-in" className="registerLink">
           Sign In Instead
