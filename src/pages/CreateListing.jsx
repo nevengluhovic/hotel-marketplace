@@ -9,6 +9,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { v4 as uuidv4 } from "uuid";
 
@@ -158,9 +159,23 @@ function CreateListing() {
       return;
     });
 
-    console.log(ImageUrls);
+    const formDataCopy = {
+      ...formData,
+      ImageUrls,
+      geolocation,
+      timestamp: serverTimestamp(),
+    };
+
+    delete formDataCopy.images;
+    delete formDataCopy.address;
+    location && (formDataCopy.location = location);
+    !formDataCopy.offer && delete formDataCopy.discountedPrice;
+
+    const docRef = await addDoc(collection(db, "listings"), formDataCopy);
 
     setLoading(false);
+    toast.success("Listing saved");
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
   };
 
   const onMutate = (e) => {
