@@ -5,12 +5,22 @@ import {
   updateProfile,
   updateEmail,
 } from "firebase/auth";
-import { updateDoc, doc } from "firebase/firestore";
+import {
+  updateDoc,
+  doc,
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "../firebase.config";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import arrowRight from "../assets/svg/keyboardArrowRightIcon.svg";
 import homeIcon from "../assets/svg/homeIcon.svg";
+import ListingItem from "../components/ListingItem";
 
 const Profile = () => {
   const auth = getAuth();
@@ -19,6 +29,42 @@ const Profile = () => {
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
   });
+  const [loading, setLoading] = useState(false);
+  const [listings, setListings] = useState(null);
+
+  useEffect(() => {
+    const fetchUserListings = async () => {
+      const listingsRef = collection(db, "listings");
+      const q = query(
+        listingsRef,
+        where("userRef", "==", auth.currentUser.uid)
+      );
+      const querySnap = await getDocs(q);
+
+      const listings = [];
+
+      querySnap.forEach((doc) => {
+        return listings.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+      setLoading(false);
+      setListings(listings);
+    };
+    fetchUserListings();
+  }, [auth.currentUser.uid]);
+
+  const onDelete = async (listingId) => {
+    if (window.confirm("Are you sure you want to delete listing?")) {
+      await deleteDoc(doc(db, "listings", listingId));
+      const updatedListings = listings.filter(
+        (listing) => listing.id !== listingId
+      );
+      setListings(updatedListings);
+      toast.success("Successfully deleted listing");
+    }
+  };
 
   const { name, email } = formData;
 
@@ -109,6 +155,21 @@ const Profile = () => {
           <p>Sell or rent your home</p>
           <img src={arrowRight} alt="arrow right" />
         </Link>
+        {!loading && listings?.length > 0 && (
+          <>
+            <p className="listingText">Your Listings</p>
+            <ul className="listingsList">
+              {listings.map((listing) => (
+                <ListingItem
+                  listing={listing.data}
+                  id={listing.id}
+                  onDelete={() => onDelete(listing.id)}
+                  key={listing.id}
+                />
+              ))}
+            </ul>
+          </>
+        )}
       </main>
     </div>
   );
