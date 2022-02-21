@@ -30,7 +30,6 @@ const Listing = () => {
 
       if (docSnap.exists()) {
         setListing(docSnap.data());
-        console.log(docSnap.data().ImageUrls);
         setLoading(false);
       }
     };
@@ -42,7 +41,7 @@ const Listing = () => {
 
   return (
     <main>
-      <Swiper slidesPreview={1} pagination={{ clickable: true }}>
+      <Swiper slidesPerView={1} pagination={{ clickable: true }}>
         {listing.ImageUrls.map((url, index) => (
           <SwiperSlide key={index}>
             <div
