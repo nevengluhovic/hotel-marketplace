@@ -55,6 +55,8 @@ const Profile = () => {
     fetchUserListings();
   }, [auth.currentUser.uid]);
 
+  const onEdit = (listingId) => {};
+
   const onDelete = async (listingId) => {
     if (window.confirm("Are you sure you want to delete listing?")) {
       await deleteDoc(doc(db, "listings", listingId));
@@ -164,6 +166,7 @@ const Profile = () => {
                   listing={listing.data}
                   id={listing.id}
                   onDelete={() => onDelete(listing.id)}
+                  onEdit={() => onEdit(listing.id)}
                   key={listing.id}
                 />
               ))}
